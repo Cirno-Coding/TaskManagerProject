@@ -12,17 +12,60 @@ namespace ConsoleAppServer
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             TcpListener listener = new TcpListener(IPAddress.Any, 5000);
             listener.Start();
 
-            Console.WriteLine("Server started on port 5000");
+            //Console.WriteLine("Server started on port 5000");
+            Console.WriteLine("Async server started...");
 
             while (true)
             {
                 TcpClient client = listener.AcceptTcpClient();
-                Task.Run(() => HandleClient(client));
+                //Task.Run(() => HandleClient(client));
+                _ = HandleClientAsync(client);
+            }
+        }
+
+        static async Task HandleClientAsync(TcpClient client)
+        {
+            try
+            {
+                using (NetworkStream stream = client.GetStream())
+                using (StreamReader reader = new StreamReader(stream))
+                using (StreamWriter writer = new StreamWriter(stream) { AutoFlush = true })
+                {
+                    while (true)
+                    {
+                        string request = await reader.ReadLineAsync();
+
+                        if (request == null)
+                        {
+                            Console.WriteLine("Client disconnected normally.");
+                            break;
+                        }
+
+                        if (request.StartsWith("LOGIN"))
+                        {
+                            string[] parts = request.Split('|');
+                            string result = await AuthService.LoginAsync(parts[1], parts[2]);
+                            await writer.WriteLineAsync(result);
+                        }
+                    }
+                }
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("Client disconnected unexpectedly.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Server error: " + ex.Message);
+            }
+            finally
+            {
+                client.Close();
             }
         }
 

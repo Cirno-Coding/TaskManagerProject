@@ -13,10 +13,10 @@ namespace WindowsFormsAppClinet
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static async Task Main()
         {
             Connection = new ServerConnection();
-            Connection.Connect();
+            await Connection.ConnectAsync();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new LoginForm());

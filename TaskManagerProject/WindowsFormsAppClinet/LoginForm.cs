@@ -17,12 +17,12 @@ namespace WindowsFormsAppClinet
             InitializeComponent();
         }
 
-        private void btnOpen_Click(object sender, EventArgs e)
+        private async void btnOpen_Click(object sender, EventArgs e)
         {
             string login = txtLogin.Text;
             string password = txtPassword.Text;
 
-            string response = Program.Connection.Send($"LOGIN|{login}|{password}");
+            string response = await Program.Connection.SendAsync($"LOGIN|{login}|{password}");
 
             switch (response)
             {
@@ -35,9 +35,24 @@ namespace WindowsFormsAppClinet
                     break;
 
                 case "SUCCESS":
-                    MessageBox.Show("Удачный вход");
+                    //MessageBox.Show("Удачный вход");
+                    OpenMainForm();
                     break;
             }
+        }
+
+        private void OpenMainForm()
+        {
+            MainForm main = new MainForm();
+
+            main.FormClosing += (s, args) =>
+            {
+                this.Show();
+                txtPassword.Clear();
+            };
+            main.Show();
+
+            this.Hide();
         }
 
         private void LoginForm_FormClosing(object sender, FormClosingEventArgs e)
