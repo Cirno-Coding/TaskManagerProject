@@ -23,8 +23,9 @@ namespace WindowsFormsAppClinet
             string password = txtPassword.Text;
 
             string response = await Program.Connection.SendAsync($"LOGIN|{login}|{password}");
+            string[] parts = response.Split('|');
 
-            switch (response)
+            switch (parts[0])
             {
                 case "NOT_FOUND":
                     MessageBox.Show("Не найден пользователь с таким логином");
@@ -36,14 +37,20 @@ namespace WindowsFormsAppClinet
 
                 case "SUCCESS":
                     //MessageBox.Show("Удачный вход");
-                    OpenMainForm();
+                    var user = new SessionUser
+                    {
+                        Id = int.Parse(parts[1]),
+                        Login = parts[2],
+                        SecurityLevel = int.Parse(parts[3])
+                    };
+                    OpenMainForm(user);
                     break;
             }
         }
 
-        private void OpenMainForm()
+        private void OpenMainForm(SessionUser user)
         {
-            MainForm main = new MainForm();
+            MainForm main = new MainForm(user);
 
             main.FormClosing += (s, args) =>
             {
@@ -58,6 +65,19 @@ namespace WindowsFormsAppClinet
         private void LoginForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             Program.Connection.Close();
+        }
+
+        private void lblReg_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            RegForm regForm = new RegForm();
+            regForm.FormClosing += (s, args) =>
+            {
+                this.Show();
+                txtPassword.Clear();
+            };
+            regForm.Show();
+
+            this.Hide();
         }
     }
 }

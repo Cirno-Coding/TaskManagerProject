@@ -52,6 +52,17 @@ namespace ConsoleAppServer
                             string result = await AuthService.LoginAsync(parts[1], parts[2]);
                             await writer.WriteLineAsync(result);
                         }
+                        if (request.StartsWith("REGISTER"))
+                        {
+                            var parts = request.Split('|');
+
+                            string result = await AuthService.RegisterAsync(
+                                parts[1],
+                                parts[2],
+                                parts[3]);
+
+                            await writer.WriteLineAsync(result);
+                        }
                     }
                 }
             }

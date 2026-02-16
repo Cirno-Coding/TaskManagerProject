@@ -89,6 +89,7 @@
       <DependentUpon>ReqForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ServerConnection.cs" />
+    <Compile Include="SessionUser.cs" />
     <Compile Include="StatusReqForm.cs">
       <SubType>Form</SubType>
     </Compile>

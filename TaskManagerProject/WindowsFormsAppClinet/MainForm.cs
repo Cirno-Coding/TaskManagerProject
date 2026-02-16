@@ -12,9 +12,18 @@ namespace WindowsFormsAppClinet
 {
     public partial class MainForm : Form
     {
-        public MainForm()
+        private SessionUser _currentUser;
+        public MainForm(SessionUser user)
         {
             InitializeComponent();
+            _currentUser = user;
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            btnStatusReq.Visible = _currentUser.SecurityLevel >= 1;
+            btnEditReq.Visible = _currentUser.SecurityLevel >= 2;
+            btnEditUsers.Visible = _currentUser.SecurityLevel >= 3;
         }
     }
 }

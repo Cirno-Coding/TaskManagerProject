@@ -47,6 +47,7 @@
             this.lblReg.TabStop = true;
             this.lblReg.Text = "Регистрация";
             this.lblReg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblReg.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblReg_LinkClicked);
             // 
             // btnOpen
             // 

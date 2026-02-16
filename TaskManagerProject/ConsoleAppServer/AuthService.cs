@@ -37,6 +37,31 @@ public static class AuthService
             if (!valid)
                 return "WRONG_PASSWORD";
 
+            return $"SUCCESS|{user.Id}|{user.username}|{user.lvl_security}";
+        }
+    }
+    public static async Task<string> RegisterAsync(string username, string password, string email)
+    {
+        using (var db = new TaskManagerEntities())
+        {
+            var exists = await db.Users.AnyAsync(u => u.username == username);
+
+            if (exists)
+                return "USER_EXISTS";
+
+            string hash = BCrypt.Net.BCrypt.HashPassword(password, workFactor: 12);
+
+            var user = new Users
+            {
+                username = username,
+                hash_passowrd = hash,
+                email = email,
+                lvl_security = 1
+            };
+
+            db.Users.Add(user);
+            await db.SaveChangesAsync();
+
             return "SUCCESS";
         }
     }
